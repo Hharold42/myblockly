@@ -27,7 +27,7 @@ const BlockProvider = ({ children }) => {
       left: 0,
       top: 0,
       pos: "toolbox",
-      after: 0,
+      name: item.name,
     };
   });
   const [render, setRender] = useState([]);

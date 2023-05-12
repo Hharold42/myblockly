@@ -9,6 +9,7 @@ const blocks = [
   {
     id: 1,
     type: "logic",
+    name: "Если иначе",
     form: BLOCK,
     shortcut: "IFELSE",
     attributes: [
@@ -33,6 +34,7 @@ const blocks = [
     id: 2,
     type: "logic",
     form: PIECE,
+    name: "Сравнить",
     shortcut: "EQUAL",
     attributes: [
       {
@@ -41,7 +43,7 @@ const blocks = [
         type: PIECE,
       },
       {
-        name: "Операция",
+        name: "",
         shortcut: "OP",
         type: DROPLIST,
         options: ["==", "!=", ">", "<", ">=", "<="],
@@ -56,6 +58,7 @@ const blocks = [
   {
     id: 3,
     type: "logic",
+    name: "И/ИЛИ",
     form: PIECE,
     shortcut: "AND",
     attributes: [
@@ -65,7 +68,7 @@ const blocks = [
         type: PIECE,
       },
       {
-        name: "и/или",
+        name: "",
         shortcut: "OP",
         type: DROPLIST,
         options: ["И", "ИЛИ"],
@@ -81,6 +84,7 @@ const blocks = [
     id: 4,
     type: "logic",
     form: PIECE,
+    name: "Отрицание",
     shortcut: "NOT",
     attributes: [{ name: "Не", shortcut: "CONNECT", type: PIECE }],
   },
@@ -88,10 +92,11 @@ const blocks = [
     id: 5,
     type: "logic",
     form: PIECE,
+    name: "Логическое значение",
     shortcut: "BOOL",
     attributes: [
       {
-        name: "Истина/ложь",
+        name: "",
         type: DROPLIST,
         shortcut: "OP",
         options: ["Истина", "Ложь"],
@@ -102,10 +107,11 @@ const blocks = [
     id: 6,
     type: "cycle",
     form: BLOCK,
+    name: "Повторить N раз",
     shortcut: "APPLYN",
     attributes: [
       {
-        name: "Количество",
+        name: "N",
         shortcut: "CONNECT",
         type: PIECE,
       },
@@ -120,15 +126,16 @@ const blocks = [
     id: 7,
     type: "cycle",
     form: BLOCK,
+    name: "Выполнять пока",
     shortcut: "WHILE",
     attributes: [
       {
-        name: "Выполнить пока",
+        name: "Пока",
         shortcut: "CONNECT",
         type: PIECE,
       },
       {
-        name: "todo",
+        name: "Выполнить",
         shortcut: "CONNECT",
         type: BLOCK,
       },
@@ -138,25 +145,26 @@ const blocks = [
     id: 8,
     type: "cycle",
     form: BLOCK,
+    name: "Цикл от А до Б с шагом",
     shortcut: "FOR",
     attributes: [
       {
-        name: "var",
+        name: "Переменная",
         shortcut: "VARIABLE",
         type: VARIABLE,
       },
       {
-        name: "from",
+        name: "А",
         shortcut: "CONNECT",
         type: PIECE,
       },
       {
-        name: "to",
+        name: "Б",
         shortcut: "CONNECT",
         type: PIECE,
       },
       {
-        name: "step",
+        name: "Шаг",
         shortcut: "CONNECT",
         type: PIECE,
       },
@@ -194,10 +202,11 @@ const blocks = [
     id: 10,
     type: "cycle",
     form: BLOCK,
+    name: "Прервать цикл или перейти к следующей итерации",
     shortcut: "CONTROLL",
     attributes: [
       {
-        name: "controll",
+        name: "",
         shortcut: "OP",
         type: DROPLIST,
         options: ["Остановить", "Перейти к следующему"],
@@ -208,10 +217,11 @@ const blocks = [
     id: 11,
     type: "math",
     form: PIECE,
+    name: "Число",
     shortcut: "NUMBER",
     attributes: [
       {
-        name: NUMBER,
+        name: "",
         shortcut: "INUMBER",
         type: NUMBER,
       },
@@ -221,21 +231,22 @@ const blocks = [
     id: 12,
     type: "math",
     form: PIECE,
+    name: "Выполнить операцию",
     shortcut: "CALC",
     attributes: [
       {
-        name: "a",
+        name: "А",
         shortcut: "CONNECT",
         type: PIECE,
       },
       {
-        name: "operator",
+        name: "",
         shortcut: "OP",
         type: DROPLIST,
         options: ["+", "-", "*", "/"],
       },
       {
-        name: "b",
+        name: "Б",
         shortcut: "CONNECT",
         type: PIECE,
       },
@@ -245,16 +256,17 @@ const blocks = [
     id: 13,
     type: "math",
     form: PIECE,
+    name: "Дополнительные математические операции",
     shortcut: "MATHOPS",
     attributes: [
       {
-        name: "operator",
+        name: "",
         shortcut: "OP",
         type: DROPLIST,
         options: ["кроень", "модуль", "-", "ln", "log10", "exp"],
       },
       {
-        name: "a",
+        name: "А",
         shortcut: "CONNECT",
         type: PIECE,
       },
@@ -264,15 +276,16 @@ const blocks = [
     id: 43,
     type: "math",
     form: PIECE,
+    name: "Возвести в степень",
     shortcut: "POWER",
     attributes: [
       {
-        name: "number",
+        name: "Число",
         shortcut: "CONNECT",
         type: PIECE,
       },
       {
-        name: "power",
+        name: "Степень",
         shortcut: "CONNECT",
         type: PIECE,
       },
@@ -282,11 +295,12 @@ const blocks = [
     id: 15,
     type: "math",
     form: PIECE,
+    name: "Пи",
     shortcut: "PI",
     attributes: [
       {
         shortcut: "PI",
-        name: "pi",
+        name: "",
       },
     ],
   },
@@ -294,15 +308,16 @@ const blocks = [
     id: 16,
     type: "math",
     form: PIECE,
+    name: "Четное/Нечетное",
     shortcut: "ODDEVEN",
     attributes: [
       {
-        name: "a",
+        name: "Число",
         shortcut: "CONNECT",
         type: PIECE,
       },
       {
-        name: "operator",
+        name: "",
         type: DROPLIST,
         shortcut: "OP",
         options: ["Нечетное?", "Четное?"],
@@ -313,15 +328,16 @@ const blocks = [
     id: 17,
     type: "math",
     form: BLOCK,
+    name: "Увеличить значение на ",
     shortcut: "INCREASE",
     attributes: [
       {
-        name: "var",
+        name: "Переменная",
         shortcut: "VARIABLE",
         type: VARIABLE,
       },
       {
-        name: "increaseBy",
+        name: "Увеличить на",
         shortcut: "CONNECT",
         type: PIECE,
       },
@@ -331,16 +347,17 @@ const blocks = [
     id: 18,
     type: "math",
     form: PIECE,
+    name: "Округлить до большего или до меньшего",
     shortcut: "ROUND",
     attributes: [
       {
-        name: "floor or roof",
+        name: "",
         shortcut: "OP",
         type: DROPLIST,
         options: ["Вверх", "Вниз"],
       },
       {
-        name: "a",
+        name: "Число",
         shortcut: "CONNECT",
         type: PIECE,
       },
@@ -350,15 +367,16 @@ const blocks = [
     id: 21,
     type: "math",
     form: PIECE,
+    name: "Случайное число",
     shortcut: "RANDOM",
     attributes: [
       {
-        name: "min",
+        name: "Минимальная граница",
         shortcut: "CONNECT",
         type: PIECE,
       },
       {
-        name: "max",
+        name: "Максимальная граница",
         shortcut: "CONNECT",
         type: PIECE,
       },
@@ -368,10 +386,11 @@ const blocks = [
     id: 22,
     type: "text",
     form: PIECE,
+    name: "Создать строку",
     shortcut: "TEXT",
     attributes: [
       {
-        name: "text",
+        name: "Текст",
         shortcut: "TEXT",
         type: TEXT,
       },
@@ -381,15 +400,16 @@ const blocks = [
     id: 23,
     type: "text",
     form: PIECE,
+    name: "Сложить строки",
     shortcut: "CONCAT",
     attributes: [
       {
-        name: "Строка",
-        shortcut: "CONNECT" ,
+        name: "Строка 1",
+        shortcut: "CONNECT",
         type: PIECE,
       },
       {
-        name: "Строка",
+        name: "Строка 2",
         shortcut: "CONNECT",
         type: PIECE,
       },
@@ -399,10 +419,11 @@ const blocks = [
     id: 25,
     type: "text",
     form: PIECE,
+    name: "Длинна строки",
     shortcut: "TEXTLENGTH",
     attributes: [
       {
-        name: "a",
+        name: "Строка",
         shortcut: "CONNECT",
         type: PIECE,
       },
@@ -412,10 +433,11 @@ const blocks = [
     id: 26,
     type: "text",
     form: PIECE,
+    name: "Проверить строку на пустоту",
     shortcut: "ISTEXTEMPTY",
     attributes: [
       {
-        name: "empty",
+        name: "Строка",
         shortcut: "CONNECT",
         type: PIECE,
       },
@@ -425,15 +447,16 @@ const blocks = [
     id: 27,
     type: "text",
     form: PIECE,
+    name: "Найти первое вхождение подстроки в строке",
     shortcut: "TEXTENTRY",
     attributes: [
       {
-        name: "var",
+        name: "Переменная",
         shortcut: "VARIABLE",
         type: VARIABLE,
       },
       {
-        name: "find",
+        name: "Подстрока",
         shortcut: "CONNECT",
         type: PIECE,
       },
@@ -443,15 +466,16 @@ const blocks = [
     id: 28,
     type: "text",
     form: PIECE,
+    name: "Найти значение символа в строке на позиции N",
     shortcut: "TAKELETTERN",
     attributes: [
       {
-        name: "var",
+        name: "Переменная",
         shortcut: "VARIABLE",
         type: VARIABLE,
       },
       {
-        name: "n",
+        name: "N",
         shortcut: "CONNECT",
         type: PIECE,
       },
@@ -461,20 +485,21 @@ const blocks = [
     id: 29,
     type: "text",
     form: PIECE,
+    name: "Вернуть подстроку в строке от А до Б",
     shortcut: "TEXTSUBSTRING",
     attributes: [
       {
-        name: "var",
+        name: "Строка",
         shortcut: "VARIABLE",
         type: VARIABLE,
       },
       {
-        name: "start",
+        name: "А",
         shortcut: "CONNECT",
         type: PIECE,
       },
       {
-        name: "end",
+        name: "Б",
         shortcut: "CONNECT",
         type: PIECE,
       },
@@ -484,10 +509,11 @@ const blocks = [
     id: 31,
     type: "text",
     form: BLOCK,
+    name: "Вывести",
     shortcut: "PRINT",
     attributes: [
       {
-        name: "toPrint",
+        name: "Значение",
         shortcut: "CONNECT",
         type: PIECE,
       },
@@ -649,15 +675,16 @@ const blocks = [
     id: 41,
     type: "variable",
     form: BLOCK,
+    name: "Создать переменную",
     shortcut: "CREATEVARIABLE",
     attributes: [
       {
-        name: "name",
+        name: "Название переменной",
         shortcut: "VARIABLE",
         type: VARIABLE,
       },
       {
-        name: "value",
+        name: "Значение переменной",
         shortcut: "CONNECT",
         type: PIECE,
       },
@@ -667,10 +694,11 @@ const blocks = [
     id: 42,
     type: "variable",
     form: PIECE,
+    name: "Получить значение переменной",
     shortcut: "GETVARIABLE",
     attributes: [
       {
-        name: "variable",
+        name: "Название переменной",
         shortcut: "VARIABLE",
         type: VARIABLE,
       },

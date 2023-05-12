@@ -6,8 +6,10 @@ import { useDrag } from "react-dnd";
 import { ItemTypes } from "../utils/constants";
 
 const Block = ({ data, dis }) => {
-  const { left, top, children, form, id, pos, type } = data;
+  const { left, top, children, form, id, pos, name } = data;
   const { variables, setRenderCurrent, addVar } = useBlock();
+
+  console.log(name);
 
   const [, drag] = useDrag(
     () => ({
@@ -72,6 +74,7 @@ const Block = ({ data, dis }) => {
             disabled={dis}
             onChange={handleCurrent}
             value={elem.current}
+            className="w-[50%]"
           >
             {options.map((item) => (
               <option key={uuid()} value={item}>
@@ -86,6 +89,7 @@ const Block = ({ data, dis }) => {
           <Form.Select
             disabled={dis}
             value={elem.current}
+            className="w-[50%]"
             onChange={(e) => {
               if (e.target.value === "add") {
                 const newVarName = prompt("Введите имя новой переменной");
@@ -135,7 +139,7 @@ const Block = ({ data, dis }) => {
     }
 
     return (
-      <div key={i} className="ml-2">
+      <div key={i} className="ml-2 flex flex-row justify-between">
         {elem.name}
         {add}
       </div>
@@ -149,13 +153,14 @@ const Block = ({ data, dis }) => {
   return (
     <div
       ref={drag}
-      className={`border-2 border-black min-w-[50px] min-h-[50px] m-5 p-2 cursor-move ${bg} ${
+      className={`border-2 border-black min-w-[200px] min-h-[50px] m-5 p-2 cursor-move ${bg} ${
         left + top === 0 ? "" : "absolute"
-      } flex ${form === "block" ? "flex-col" : "flex-row"}`}
+      } flex ${form === "block" ? "flex-col" : "flex-col"}`}
       style={{ left, top }}
       key={id}
     >
-      {blockType}
+      {name}
+      <br />
       {lines}
     </div>
   );

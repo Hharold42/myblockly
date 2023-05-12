@@ -2,6 +2,7 @@ import { ItemTypes } from "../utils/constants";
 import { useDrop } from "react-dnd";
 import { useBlock } from "../BlocklyContext";
 import Block from "./Block";
+import Dropbin from "./Dropbin";
 
 const Canvas = () => {
   const { addToRender, render, moveRenderedBlock, removeFromChildren } =
@@ -36,6 +37,7 @@ const Canvas = () => {
   return (
     <div ref={drop} className="bg-white w-[100%] h-[100vh] relative">
       {canvasRender}
+      <Dropbin />
     </div>
   );
 };

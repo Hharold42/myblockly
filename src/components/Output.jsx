@@ -49,7 +49,7 @@ const makeJsChild = (child, mode = "js") => {
       return <div></div>;
     case "VARIABLE":
       if (child.current !== 0) {
-        return `${" "}${child.current}${" "}`;
+        return `${child.current}`;
       }
       return <div>i</div>;
     case "INUMBER":
@@ -64,16 +64,17 @@ const makeJsChild = (child, mode = "js") => {
 
 const makeJs = (obj) => {
   const key = Object.keys(obj)[0];
+  const data = { ...obj[key] };
 
   switch (key) {
     case "EQUAL":
-      let [_a, _op, _b] = obj[key];
-
       return (
         <div className="flex flex-row">
-          (<div>{makeJsChild(_a)}</div>
-          <div>{makeJsChild(_op)}</div>
-          <div>{makeJsChild(_b)}</div>)
+          ({makeJsChild(data[0])}
+          <div className="ml-1 mr-1">
+            {data[1].current === 0 ? "==" : makeJsChild(data[1])}
+          </div>
+          {makeJsChild(data[2])})
         </div>
       );
     case "IFELSE":
@@ -94,9 +95,11 @@ const makeJs = (obj) => {
     case "AND":
       return (
         <div className="flex flex-row">
-          (<div>{makeJsChild({ ...obj[key][0] })}</div>
-          <div>{makeJsChild({ ...obj[key][1] })}</div>
-          <div>{makeJsChild({ ...obj[key][2] })}</div>)
+          (<div>{makeJsChild(data[0])}</div>
+          <div>
+            {data[1].current === 0 || data[1].current === "И" ? "&&" : "||"}
+          </div>
+          <div>{makeJsChild(data[2])}</div>)
         </div>
       );
 
@@ -106,7 +109,11 @@ const makeJs = (obj) => {
       );
     case "BOOL":
       return (
-        <div className="flex flex-row">{makeJsChild({ ...obj[key][0] })}</div>
+        <div className="flex flex-row">
+          {data[0].current === 0 || data[0].current === "Истина"
+            ? "true"
+            : "false"}
+        </div>
       );
 
     case "APPLYN":
@@ -117,7 +124,9 @@ const makeJs = (obj) => {
           count++){`{`}
           <br />
           &nbsp;
-          <div className="inline-block">{makeJsChild({ ...obj[key][1] })}</div>
+          <div className="inline-block">
+            {data[1].current === 0 ? "" : makeJsChild({ ...obj[key][1] })}
+          </div>
           <br />
           {`}`}
         </div>
@@ -130,7 +139,9 @@ const makeJs = (obj) => {
           {`{`}
           <br />
           &nbsp;{" "}
-          <div className="inline-block">{makeJsChild({ ...obj[key][1] })}</div>
+          <div className="inline-block">
+            {data[1].current === 0 ? "" : makeJsChild({ ...obj[key][1] })}
+          </div>
           <br />
           {`}`}
         </div>
@@ -151,7 +162,9 @@ const makeJs = (obj) => {
           {`{`}
           <br />
           &nbsp;
-          <div className="inline-block">{makeJsChild({ ...obj[key][4] })}</div>
+          <div className="inline-block">
+            {data[4].current === 0 ? "" : makeJsChild({ ...obj[key][4] })}
+          </div>
           <br />
           {`}`}
         </div>
@@ -159,8 +172,10 @@ const makeJs = (obj) => {
 
     case "CONTROLL":
       return (
-        <div className="whitespace-nowrap">
-          <div className="inline-block">{makeJsChild({ ...obj[key][0] })}</div>
+        <div className="flex flex-row">
+          {data[0].current === 0 || data[0].current === "Остановить"
+            ? "break"
+            : "continue"}
         </div>
       );
 
@@ -174,20 +189,44 @@ const makeJs = (obj) => {
     case "CALC":
       return (
         <div className="flex flex-row">
-          (<div>{makeJsChild({ ...obj[key][0] })}</div>
-          <div>{makeJsChild({ ...obj[key][1] })}</div>
-          <div>{makeJsChild({ ...obj[key][2] })}</div>)
+          ({makeJsChild({ ...obj[key][0] })}
+          <div className="pl-1 pr-1">
+            {data[1].current === 0 ? "+" : makeJsChild(data[1])}
+          </div>
+          {makeJsChild({ ...obj[key][2] })})
         </div>
       );
     case "MATHOPS":
+      let op = data[0].current;
+      let res = "Math.sqrt";
+
+      switch (op) {
+        case "корень":
+          res = "Math.sqrt";
+          break;
+        case "модуль":
+          res = "Math.abs";
+          break;
+        case "-":
+          res = "-";
+          break;
+        case "ln":
+          res = "Math.log";
+          break;
+        case "log10":
+          res = "Math.log10";
+          break;
+        case "exp":
+          res = "Math.exp";
+          break;
+        default:
+          break;
+      }
+
       return (
         <div className="flex flex-row">
-          <div className="flex flex-row">
-            {makeJsChild({ ...obj[key][0] })}(
-            <div className="flex flex-row">
-              {makeJsChild({ ...obj[key][1] })}
-            </div>
-            )
+          <div>
+            {res}({makeJsChild(data[1])})
           </div>
         </div>
       );
@@ -206,12 +245,12 @@ const makeJs = (obj) => {
         </div>
       );
     case "PI":
-      return <div>Math.PI()</div>;
+      return <div>Math.PI</div>;
     case "ODDEVEN":
       return (
         <div className="flex flex-row">
-          <div>{makeJsChild({ ...obj[key][0] })}</div> % 2 =={" "}
-          {obj[key][1].current === "isEven" ? 0 : 1}
+          <div>{makeJsChild(data[0])}</div>&nbsp;% 2 =={" "}
+          {obj[key][1].current === "Четное?" ? 0 : 1}
         </div>
       );
 
@@ -227,15 +266,8 @@ const makeJs = (obj) => {
     case "ROUND":
       return (
         <div className="flex flex-row">
-          Math.{obj[key][0].current === "roof" ? "ceil" : "floor"}(
+          Math.{obj[key][0].current === "Вниз" ? "floor" : "ceil"}(
           <div>{makeJsChild({ ...obj[key][1] })}</div>)
-        </div>
-      );
-    case "REMAINDIVISON":
-      return (
-        <div className="flex flex-row">
-          <div>{makeJsChild({ ...obj[key][0] })}</div> &nbsp;%&nbsp;{" "}
-          <div>{makeJsChild({ ...obj[key][1] })}</div>
         </div>
       );
     case "RANDOM":
@@ -251,9 +283,9 @@ const makeJs = (obj) => {
     case "CONCAT":
       return (
         <div className="flex flex-row">
-          <div>{obj[key][0].current === 0 ? '" "' : obj[key][0].current}</div>
+          <div>{obj[key][0].current === 0 ? '" "' : makeJsChild(data[0])}</div>
           .concat(
-          <div>{obj[key][1].current === 0 ? '" "' : obj[key][1].current}</div>)
+          <div>{obj[key][1].current === 0 ? '" "' : makeJsChild(data[1])}</div>)
         </div>
       );
     case "TEXTLENGTH":
@@ -271,14 +303,14 @@ const makeJs = (obj) => {
     case "TEXTENTRY":
       return (
         <div className="flex flex-row">
-          {makeJsChild({ ...obj[key][0] })}.indexOf(
-          <div>{makeJsChild({ ...obj[key][1] })}</div>)
+          {data[0].current === 0 ? "''" : makeJsChild(data[0])}.indexOf(
+          <div>{data[1].current === 0 ? "''" : makeJsChild(data[1])}</div>)
         </div>
       );
     case "TAKELETTERN":
       return (
         <div className="flex flex-row">
-          {makeJsChild({ ...obj[key][0] })}.charAt(
+          {data[0].current === 0 ? "''" : makeJsChild(data[0])}.charAt(
           {makeJsChild({ ...obj[key][1] })})
         </div>
       );
@@ -292,13 +324,13 @@ const makeJs = (obj) => {
     case "PRINT":
       return (
         <div className="flex flex-row">
-          alert({makeJsChild({ ...obj[key][0] })})
+          alert({data[0].current === 0 ? "''" : makeJsChild(data[0])})
         </div>
       );
     case "CREATEVARIABLE":
       return (
         <div className="flex flex-row">
-          var{makeJsChild({ ...obj[key][0] })} ={" "}
+          var&nbsp;{makeJsChild({ ...obj[key][0] })} ={" "}
           {makeJsChild({ ...obj[key][1] })}
         </div>
       );
@@ -321,11 +353,11 @@ const makePie = (obj) => {
     case "EQUAL":
       return (
         <div className="flex flex-row">
-          <div>{makeJsChild(data[0], "py")}</div>
+          {makeJsChild(data[0], "py")}
           <div className="ml-1 mr-1">
             {data[1].current === 0 ? "==" : makeJsChild(data[1], "py")}
           </div>
-          <div>{makeJsChild(data[2], "py")}</div>
+          {makeJsChild(data[2], "py")}
         </div>
       );
     case "IFELSE":
@@ -466,8 +498,7 @@ const makePie = (obj) => {
       return (
         <div className="flex flex-row">
           <div>
-            {res}
-            {makeJsChild(data[1], "py")}
+            {res}({makeJsChild(data[1], "py")})
           </div>
         </div>
       );
@@ -482,8 +513,8 @@ const makePie = (obj) => {
     case "ODDEVEN":
       return (
         <div className="flex flex-row">
-          <div>{makeJsChild({ ...obj[key][0] })}</div>&nbsp;% 2 =={" "}
-          {obj[key][1].current === "Четное" ? 0 : 1}
+          <div>{makeJsChild(data[0], "py")}</div>&nbsp;% 2 =={" "}
+          {obj[key][1].current === "Четное?" ? 0 : 1}
         </div>
       );
 
@@ -491,9 +522,9 @@ const makePie = (obj) => {
       return (
         <div className="whitespace-nowrap">
           <div className="flex flex-row">
-            {makeJsChild({ ...obj[key][0] })}&nbsp;=&nbsp;
-            {makeJsChild({ ...obj[key][0] })} &nbsp;+&nbsp;
-            {makeJsChild({ ...obj[key][1] })}
+            {makeJsChild(data[0], "py")}&nbsp;=&nbsp;
+            {makeJsChild(data[0], "py")} &nbsp;+&nbsp;
+            {makeJsChild(data[1], "py")}
           </div>
         </div>
       );
@@ -501,7 +532,7 @@ const makePie = (obj) => {
       return (
         <div className="flex flex-row">
           math.{obj[key][0].current === "Вниз" ? "round" : "ceil"}(
-          <div>{makeJsChild({ ...obj[key][1] })}</div>)
+          <div>{makeJsChild(data[1])}</div>)
         </div>
       );
     case "RANDOM":
@@ -512,65 +543,62 @@ const makePie = (obj) => {
         </div>
       );
     case "TEXT":
-      return <div>"{obj[key][0].current}"</div>;
+      return <div>'{data[0].current}'</div>;
     case "CONCAT":
       return (
         <div className="flex flex-row">
-          <div>{obj[key][0].current === 0 ? '" "' : obj[key][0].current}</div>
-          .concat(
-          <div>{obj[key][1].current === 0 ? '" "' : obj[key][1].current}</div>)
+          {data[0].current === 0 ? "''" : makeJsChild(data[0], "py")}
+          &nbsp;+&nbsp;
+          {data[1].current === 0 ? "''" : makeJsChild(data[1], "py")}
         </div>
       );
     case "TEXTLENGTH":
       return (
         <div className="flex flex-row">
-          {obj[key][0].current === 0 ? '" "' : obj[key][0].current}.length
+          len({data[0].current === 0 ? "''" : makeJsChild(data[0], "py")})
         </div>
       );
     case "ISTEXTEMPTY":
       return (
         <div className="flex flex-row">
-          {obj[key][0].current === 0 ? '" "' : obj[key][0].current}.length === 0
+          bool({data[0].current === 0 ? "''" : makeJsChild(data[0], "py")})
         </div>
       );
     case "TEXTENTRY":
       return (
         <div className="flex flex-row">
-          {makeJsChild({ ...obj[key][0] })}.indexOf(
-          <div>{makeJsChild({ ...obj[key][1] })}</div>)
+          {data[0].current === 0 ? "''" : makeJsChild(data[0], "py")}.find(
+          {data[1].current === 0 ? "''" : makeJsChild(data[1], "py")})
         </div>
       );
     case "TAKELETTERN":
       return (
         <div className="flex flex-row">
-          {makeJsChild({ ...obj[key][0] })}.charAt(
-          {makeJsChild({ ...obj[key][1] })})
+          {data[0].current === 0 ? "''" : makeJsChild(data[0], "py")}[
+          {makeJsChild(data[1], "py")}]
         </div>
       );
     case "TEXTSUBSTRING":
       return (
         <div className="flex flex-row">
-          {obj[key][0].current === 0 ? '" "' : obj[key][0].current}.slice(
-          {makeJsChild({ ...obj[key][1] })} , {makeJsChild({ ...obj[key][2] })})
+          {makeJsChild(data[0], "py")}[{makeJsChild(data[1], "py")},{" "}
+          {makeJsChild(data[2], "py")}]
         </div>
       );
     case "PRINT":
       return (
         <div className="flex flex-row">
-          alert({makeJsChild({ ...obj[key][0] })})
+          print({data[0].current === 0 ? "''" : makeJsChild(data[0], "py")})
         </div>
       );
     case "CREATEVARIABLE":
       return (
         <div className="flex flex-row">
-          var{makeJsChild({ ...obj[key][0] })} ={" "}
-          {makeJsChild({ ...obj[key][1] })}
+          {makeJsChild(data[0], "py")} = {makeJsChild(data[1], "py")}
         </div>
       );
     case "GETVARIABLE":
-      return (
-        <div className="flex flex-row">{makeJsChild({ ...obj[key][0] })}</div>
-      );
+      return <div className="flex flex-row">{makeJsChild(data[0], "py")}</div>;
     default:
       break;
   }

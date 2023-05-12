@@ -52,7 +52,7 @@ const DropBox = ({ dis, curr, i }) => {
   return (
     <div
       ref={dis ? undefined : drop}
-      className="min-w-[70%] min-h-[20px] ml-2 bg-white clear-both border-2 border-black"
+      className="min-w-[40%] min-h-[20px] ml-2 bg-white clear-both border-2 border-black"
     >
       {res}
     </div>
