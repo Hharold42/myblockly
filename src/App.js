@@ -5,6 +5,10 @@ import BlockProvider from "./BlocklyContext";
 import Canvas from "./components/Canvas";
 import Output from "./components/Output";
 
+//Главный компонент, который добавляется в root.
+// DndProvider - это контекст, который используется для передачи данных при перемещении блоков. Поставляется библиотекой react-dnd
+// HTML5Backend - бэкенд позволяющий перемещать блоки из компонента-родителя во внешние компоненты
+// BlockProvider - кастомный контекст, написанный для упрощения работы с состояниями страницы и глобального хранения данных, без утечек
 function App() {
   return (
     <DndProvider backend={HTML5Backend}>

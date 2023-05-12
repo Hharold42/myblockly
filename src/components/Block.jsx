@@ -9,8 +9,6 @@ const Block = ({ data, dis }) => {
   const { left, top, children, form, id, pos, name } = data;
   const { variables, setRenderCurrent, addVar } = useBlock();
 
-  console.log(name);
-
   const [, drag] = useDrag(
     () => ({
       type: ItemTypes.BLOCK,
@@ -145,10 +143,6 @@ const Block = ({ data, dis }) => {
       </div>
     );
   });
-
-  const blockType = (
-    <div>{form === "piece" ? <div>Piece</div> : <div>Block</div>}</div>
-  );
 
   return (
     <div

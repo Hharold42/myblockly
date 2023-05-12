@@ -70,26 +70,25 @@ const makeJs = (obj) => {
     case "EQUAL":
       return (
         <div className="flex flex-row">
-          ({makeJsChild(data[0])}
+          {makeJsChild(data[0])}
           <div className="ml-1 mr-1">
             {data[1].current === 0 ? "==" : makeJsChild(data[1])}
           </div>
-          {makeJsChild(data[2])})
+          {makeJsChild(data[2])}
         </div>
       );
     case "IFELSE":
-      let [_if, _to, _else] = obj[key];
-
       return (
         <div className="whitespace-nowrap">
-          if (<div className="inline-block">{makeJsChild(_if)}</div>){`{`}
-          <br />
-          &nbsp;<div className="inline-block">{makeJsChild(_to)}</div>
-          <br />
-          {`}`} else {`{`} <br></br>
-          &nbsp;<div className="inline-block">{makeJsChild(_else)}</div>{" "}
-          <br></br>
-          {`}`}
+          <div className="flex flex-row">
+            if ({data[0].current === 0 ? "" : makeJsChild(data[0])}){`{`}
+          </div>
+          <div className="ml-3">{data[1].current === 0 ? "" : makeJsChild(data[1])}</div>
+          <div>
+            {`}`} else {"{"}
+          </div>
+          <div className="ml-3">{data[2].current === 0 ? "" : makeJsChild(data[2])}</div>
+          <div>{`}`}</div>
         </div>
       );
     case "AND":
@@ -641,7 +640,7 @@ const Output = () => {
   };
 
   return (
-    <div className="h-[100vh] min-w-[300px] sticky">
+    <div className="h-[100vh] min-w-[300px] sticky bg-slate-300">
       <button
         className="ml-2 mt-2 p-2 text-white bg-slate-500 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]"
         onClick={(e) => handleClick(e)("js")}
@@ -654,7 +653,9 @@ const Output = () => {
       >
         Python
       </button>
-      <div id="res">{res}</div>
+      <p id="res" className="m-2 bg-white h-[90%]">
+        {res}
+      </p>
     </div>
   );
 };

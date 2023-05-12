@@ -6,7 +6,8 @@ import { useEffect, useState } from "react";
 import { isEmpty } from "../utils/utils";
 
 const DropBox = ({ dis, curr, i }) => {
-  const { removeFromRender, setRenderCurrent, render, findId } = useBlock();
+  const { removeFromRender, setRenderCurrent, render, findId, addToRender } =
+    useBlock();
 
   const [, drop] = useDrop(() => ({
     accept: ItemTypes.BLOCK,
@@ -14,9 +15,11 @@ const DropBox = ({ dis, curr, i }) => {
       const didDrop = monitor.didDrop();
       if (didDrop) return;
 
-      const res = removeFromRender(item.blockId);
-
-      setRenderCurrent(res, curr, i);
+      if (item.pos === "toolbox") {
+      } else {
+        const res = removeFromRender(item.blockId);
+        setRenderCurrent(res, curr, i);
+      }
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),

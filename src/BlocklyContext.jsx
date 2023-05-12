@@ -6,14 +6,17 @@ import {
   useState,
 } from "react";
 import blocks from "./data/toolbar";
-import Block from "./components/Block";
 import { v4 as uuid } from "uuid";
 import { isEmpty } from "./utils/utils";
 
+//создание пустого контекста
 const BlockContext = createContext();
+//экспорт кастомного хука для доступа к контексту
 export const useBlock = () => useContext(BlockContext);
 
+//заполнение контекста данными
 const BlockProvider = ({ children }) => {
+  //преобразование статичных данных в данные для отображения в Левом меню блоков
   const toolBox = blocks.map((item) => {
     return {
       id: item.id,
@@ -30,22 +33,19 @@ const BlockProvider = ({ children }) => {
       name: item.name,
     };
   });
+  //состояние render отвечает за динамическое хранение данных отображаемых на канвасе. setRender() - функция для изменения состояния имеет перегрузку в виде serRender(*предыдущее состояние* => ())
   const [render, setRender] = useState([]);
+  //здесь хранятся переменные для блока "Переменная"
   const [variables, setVariables] = useState([]);
 
+  //функция добавления новой переменной
   const addVar = (variable) => {
     if (!variables.includes(variable)) {
       setVariables((prev) => [...prev, variable]);
     } else alert("Данная переменная уже создана");
   };
 
-  const createBlock = (toolbox, id) => {
-    if (toolbox) {
-      const data = blocks[id];
-      return <Block key={uuid()} data={data} toolbox={toolbox} />;
-    }
-  };
-
+  //добавляет блок в канвас с заданной позицией
   const addToRender = (id, left, top) => {
     const data = toolBox.find((elem) => elem.id === id);
 
@@ -83,6 +83,7 @@ const BlockProvider = ({ children }) => {
     return res;
   };
 
+  //ищет объект в канвасе
   const findId = (id, arr) => {
     let res = {};
 
@@ -97,6 +98,7 @@ const BlockProvider = ({ children }) => {
     return res;
   };
 
+  //удаляет объект из канваса
   const removeFromRender = (id) => {
     let res = {};
 
@@ -113,32 +115,31 @@ const BlockProvider = ({ children }) => {
     return res;
   };
 
-  const removeFromChildren = useCallback(
-    (id) => {
-      let res = {};
+  const removeFromChildren = (id) => {
+    console.log("1");
+    let res = {};
 
-      setRender((prev) =>
-        prev.map((item) => {
-          return {
-            ...item,
-            children: item.children.map((elem) => {
-              if (elem.current.id === id) {
-                res = { ...elem.current };
-                return { ...elem, current: 0 };
-              }
-              return elem;
-            }),
-          };
-        })
-      );
+    setRender((prev) =>
+      prev.map((item) => {
+        return {
+          ...item,
+          children: item.children.map((elem) => {
+            if (elem.current.id === id) {
+              res = { ...elem.current };
+              return { ...elem, current: 0 };
+            }
+            return elem;
+          }),
+        };
+      })
+    );
 
-      setRender((prev) => [...prev, res]);
+    setRender((prev) => [...prev, res]);
 
-      return res;
-    },
-    [setRender]
-  );
+    return res;
+  };
 
+  //Добавляет блок внутрь дргугого блока
   const setRenderCurrent = useCallback(
     (newCurr, id, i) => {
       if (i === -1) {
@@ -165,6 +166,7 @@ const BlockProvider = ({ children }) => {
     [setRender]
   );
 
+  //Обновляет позицию блока в канвасе
   const moveRenderedBlock = useCallback(
     (id, left, top) => {
       setRender((prev) =>
@@ -179,7 +181,6 @@ const BlockProvider = ({ children }) => {
   const providerValue = {
     render,
     setRender,
-    createBlock,
     toolBox,
     variables,
     addVar,
