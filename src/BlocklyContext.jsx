@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import blocks from "./data/toolbar";
@@ -37,6 +38,7 @@ const BlockProvider = ({ children }) => {
   const [render, setRender] = useState([]);
   //здесь хранятся переменные для блока "Переменная"
   const [variables, setVariables] = useState([]);
+  const [scrollY, setScrollY] = useState(0);
 
   //функция добавления новой переменной
   const addVar = (variable) => {
@@ -64,6 +66,12 @@ const BlockProvider = ({ children }) => {
       },
     ]);
   };
+
+  const getScroll = useRef(null)
+
+  useEffect(() => {
+    getScroll.current = scrollY
+  }, [scrollY])
 
   const findIdInObj = (id, obj) => {
     let res = {};
@@ -190,6 +198,9 @@ const BlockProvider = ({ children }) => {
     removeFromRender,
     findId,
     removeFromChildren,
+    scrollY,
+    setScrollY,
+    getScroll
   };
 
   useEffect(() => {

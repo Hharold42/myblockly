@@ -169,7 +169,7 @@ const blocks = [
         type: PIECE,
       },
       {
-        name: "todo",
+        name: "Выполнить",
         shortcut: "CONNECT",
         type: BLOCK,
       },

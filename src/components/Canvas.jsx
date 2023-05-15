@@ -5,8 +5,13 @@ import Block from "./Block";
 import Dropbin from "./Dropbin";
 
 const Canvas = () => {
-  const { addToRender, render, moveRenderedBlock, removeFromChildren } =
-    useBlock();
+  const {
+    addToRender,
+    render,
+    moveRenderedBlock,
+    removeFromChildren,
+    getScroll
+  } = useBlock();
 
   const [, drop] = useDrop(() => ({
     accept: ItemTypes.BLOCK,
@@ -14,8 +19,19 @@ const Canvas = () => {
       const didDrop = monitor.didDrop();
       if (didDrop) return;
       const delta = monitor.getDifferenceFromInitialOffset();
-      const left = Math.round(item.left + delta.x);
-      const top = Math.round(item.top + delta.y);
+      const addY =
+        item.pos === "toolbox"
+          ? Number(document.getElementById(`tmpId${item.blockId}`).offsetTop) -
+            getScroll.current
+          : 0;
+      console.log("addY - ", addY, getScroll.current);
+      const left = Math.round(
+        item.pos === "toolbox"
+          ? item.left + delta.x - 308.33
+          : item.left + delta.x
+      );
+      const top = Math.round(item.top + delta.y + addY);
+      console.log(delta);
       if (item.pos === "toolbox") addToRender(item.blockId, left, top);
       else if (item.pos === "canvas")
         moveRenderedBlock(item.blockId, left, top);

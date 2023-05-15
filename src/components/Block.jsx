@@ -13,7 +13,7 @@ const Block = ({ data, dis }) => {
     () => ({
       type: ItemTypes.BLOCK,
       item: () => {
-        return { blockId: id, left: left, top: top, pos: pos };
+        return { blockId: id, left: left, top: top, pos: pos, form: form };
       },
       collect: (monitor) => ({
         isDragging: !!monitor.isDragging(),
@@ -59,10 +59,10 @@ const Block = ({ data, dis }) => {
     var add = <></>;
     switch (elem.type) {
       case "piece":
-        add = <DropBox dis={dis} curr={id} i={i} />;
+        add = <DropBox dis={dis} curr={id} i={i} accept={"piece"} />;
         break;
       case "block":
-        add = <DropBox dis={dis} curr={id} i={i} />;
+        add = <DropBox dis={dis} curr={id} i={i} accept={"block"} />;
         break;
       case "droplist":
         const options = elem.options;
@@ -147,12 +147,14 @@ const Block = ({ data, dis }) => {
   return (
     <div
       ref={drag}
+      id={`tmpId${id}`}
       className={`border-2 border-black min-w-[200px] min-h-[50px] m-5 p-2 cursor-move ${bg} ${
         left + top === 0 ? "" : "absolute"
       } flex ${form === "block" ? "flex-col" : "flex-col"}`}
       style={{ left, top }}
       key={id}
     >
+      <p className="text-sm text-gray-500">{form}</p>
       {name}
       <br />
       {lines}
