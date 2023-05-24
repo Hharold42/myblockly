@@ -3,15 +3,11 @@ import { useDrop } from "react-dnd";
 import { useBlock } from "../BlocklyContext";
 import Block from "./Block";
 import Dropbin from "./Dropbin";
+import { v4 as uuid } from "uuid";
 
 const Canvas = () => {
-  const {
-    addToRender,
-    render,
-    moveRenderedBlock,
-    removeFromChildren,
-    getScroll
-  } = useBlock();
+  const { addToRender, render, moveRenderedBlock, getScroll, activeRender } =
+    useBlock();
 
   const [, drop] = useDrop(() => ({
     accept: ItemTypes.BLOCK,
@@ -24,35 +20,33 @@ const Canvas = () => {
           ? Number(document.getElementById(`tmpId${item.blockId}`).offsetTop) -
             getScroll.current
           : 0;
-      console.log("addY - ", addY, getScroll.current);
       const left = Math.round(
         item.pos === "toolbox"
           ? item.left + delta.x - 308.33
           : item.left + delta.x
       );
       const top = Math.round(item.top + delta.y + addY);
-      console.log(delta);
       if (item.pos === "toolbox") addToRender(item.blockId, left, top);
       else if (item.pos === "canvas")
         moveRenderedBlock(item.blockId, left, top);
-      else if (item.pos === "content") removeFromChildren(item.blockId);
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     }),
   }));
 
-  const canvasRender = render.map((data) => {
+  const canvasActive = activeRender.map((id) => {
+    const data = { ...render.find((item) => item.id === id) };
     return (
       <div key={data.id}>
-        <Block data={data} dis={false} />
+        <Block data={data} dis={false} />;
       </div>
     );
   });
 
   return (
     <div ref={drop} className="bg-white w-[100%] h-[100vh] relative">
-      {canvasRender}
+      {canvasActive}
       <Dropbin />
     </div>
   );

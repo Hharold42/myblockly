@@ -6,7 +6,7 @@ import { useCallback, useEffect } from "react";
 // Компонент в левой части сайта, отображающий блоки, которые можно впоследствии использовать
 // useBlock() - кастомный хук, для быстрого доступа к данным из контекста
 const ToolBar = () => {
-  const { toolBox, scrollY, setScrollY } = useBlock();
+  const { toolBox, setScrollY } = useBlock();
 
   const handleScroll = useCallback(() => {
     const toolbar = document.getElementById("toolbar");
@@ -19,10 +19,6 @@ const ToolBar = () => {
 
     return () => toolbar.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
-
-  useEffect(() => {
-    console.log(scrollY);
-  }, [scrollY]);
 
   const res = toolBox.map((item) => (
     <Block data={item} key={uuid()} dis={true} />

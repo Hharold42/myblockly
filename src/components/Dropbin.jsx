@@ -3,7 +3,7 @@ import { useBlock } from "../BlocklyContext";
 import { ItemTypes } from "../utils/constants";
 
 const Dropbin = () => {
-  const { removeFromRender } = useBlock();
+  const { removeFromActive } = useBlock();
 
   const [, drop] = useDrop(() => ({
     accept: ItemTypes.BLOCK,
@@ -11,8 +11,7 @@ const Dropbin = () => {
       const didDrop = monitor.didDrop();
       if (didDrop) return;
 
-      console.log("did");
-      removeFromRender(item.blockId);
+      removeFromActive(item.blockId);
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),

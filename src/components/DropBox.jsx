@@ -3,26 +3,25 @@ import { ItemTypes } from "../utils/constants";
 import { useBlock } from "../BlocklyContext";
 import Block from "./Block";
 import { useEffect, useState } from "react";
-import { isEmpty } from "../utils/utils";
 
 const DropBox = ({ dis, curr, i, accept }) => {
-  const { removeFromRender, setRenderCurrent, render, findId } = useBlock();
+  const { setRenderCurrent, render, removeFromActive } =
+    useBlock();
 
   const [, drop] = useDrop(() => ({
     accept: ItemTypes.BLOCK,
     drop: (item, monitor) => {
       const didDrop = monitor.didDrop();
       if (didDrop) return;
-      if (accept !== item.form) {
+      if (accept !== item.form && accept !== "all") {
         alert("Неправильный тип блока");
-        console.log(`Box accept - ${accept} got on Drop ${item.form}`);
         return;
       }
 
       if (item.pos === "toolbox") {
       } else {
-        const res = removeFromRender(item.blockId);
-        setRenderCurrent(res, curr, i);
+        removeFromActive(item.blockId);
+        setRenderCurrent(item.blockId, curr, i);
       }
     },
     collect: (monitor) => ({
@@ -34,27 +33,15 @@ const DropBox = ({ dis, curr, i, accept }) => {
   const [res, setRes] = useState(null);
 
   useEffect(() => {
-    const found = findId(curr, render);
-    if (!isEmpty(found)) {
-      if (found.children[i].current !== 0) {
-        setRes(
-          <div>
-            <Block
-              data={{
-                ...found.children[i].current,
-                left: 0,
-                top: 0,
-                pos: "content",
-              }}
-              dis={false}
-            />
-          </div>
-        );
-      }
-    } else {
-      setRes(<></>);
+    const tmp = render.find((item) => item.id === curr);
+
+    if (tmp && tmp.children[i].current !== 0) {
+      const data = {
+        ...render.find((item) => item.id === tmp.children[i].current),
+      };
+      setRes(<Block data={data} dis={false} />);
     }
-  }, [render, curr, i, findId]);
+  }, [render, setRes, curr, i]);
 
   return (
     <div

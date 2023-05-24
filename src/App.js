@@ -3,7 +3,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import ToolBar from "./components/ToolBar";
 import BlockProvider from "./BlocklyContext";
 import Canvas from "./components/Canvas";
-import Output from "./components/Output";
+import NewOutput from "./components/NewOutput";
 
 //Главный компонент, который добавляется в root.
 // DndProvider - это контекст, который используется для передачи данных при перемещении блоков. Поставляется библиотекой react-dnd
@@ -16,7 +16,7 @@ function App() {
         <div className="flex flex-row h-[100vh] w-[100%]">
           <ToolBar />
           <Canvas />
-          <Output />
+          <NewOutput />
         </div>
       </BlockProvider>
     </DndProvider>

@@ -2,12 +2,34 @@ import { Form } from "react-bootstrap";
 import DropBox from "./DropBox";
 import { v4 as uuid } from "uuid";
 import { useBlock } from "../BlocklyContext";
-import { useDrag } from "react-dnd";
+import { useDrag, useDrop } from "react-dnd";
 import { ItemTypes } from "../utils/constants";
+import { useEffect, useState } from "react";
 
 const Block = ({ data, dis }) => {
   const { left, top, children, form, id, pos, name } = data;
-  const { variables, setRenderCurrent, addVar } = useBlock();
+  const {
+    variables,
+    setRenderCurrent,
+    addVar,
+    removeFromActive,
+    addAfter,
+    render,
+  } = useBlock();
+
+  const [, drop] = useDrop(() => ({
+    accept: ItemTypes.BLOCK,
+    drop: (item, monitor) => {
+      const didDrop = monitor.didDrop();
+      if (didDrop) return;
+
+      if (item.pos === "toolbox") {
+      } else {
+        removeFromActive(item.blockId);
+        addAfter(id, item.blockId);
+      }
+    },
+  }));
 
   const [, drag] = useDrag(
     () => ({
@@ -144,11 +166,24 @@ const Block = ({ data, dis }) => {
     );
   });
 
+  const [after, setAfter] = useState(null);
+
+  useEffect(() => {
+    const found = render.find((item) => item.id === id);
+
+    if (found && found.after.current !== 0) {
+      const data = {
+        ...render.find((item) => item.id === found.after.current),
+      };
+      setAfter(<Block data={data} dis={false} />);
+    }
+  }, [render, setAfter, id]);
+
   return (
     <div
       ref={drag}
       id={`tmpId${id}`}
-      className={`border-2 border-black min-w-[200px] min-h-[50px] m-5 p-2 cursor-move ${bg} ${
+      className={`border-2 border-black min-w-[200px] min-h-[50px] p-2 cursor-move ${bg} ${
         left + top === 0 ? "" : "absolute"
       } flex ${form === "block" ? "flex-col" : "flex-col"}`}
       style={{ left, top }}
@@ -158,6 +193,12 @@ const Block = ({ data, dis }) => {
       {name}
       <br />
       {lines}
+      <div
+        ref={dis ? undefined : drop}
+        className="min-w-full min-h-[20px] bg-white clear-both border-2 border-black"
+      >
+        {after ? after : <p className="opacity-20">Далее</p>}
+      </div>
     </div>
   );
 };

@@ -32,10 +32,17 @@ const BlockProvider = ({ children }) => {
       top: 0,
       pos: "toolbox",
       name: item.name,
+      after: {
+        name: "Далее",
+        shortcut: "CONNECT",
+        type: "all",
+        current: 0,
+      },
     };
   });
   //состояние render отвечает за динамическое хранение данных отображаемых на канвасе. setRender() - функция для изменения состояния имеет перегрузку в виде serRender(*предыдущее состояние* => ())
   const [render, setRender] = useState([]);
+  const [activeRender, setActiveRender] = useState([]);
   //здесь хранятся переменные для блока "Переменная"
   const [variables, setVariables] = useState([]);
   const [scrollY, setScrollY] = useState(0);
@@ -51,27 +58,38 @@ const BlockProvider = ({ children }) => {
   const addToRender = (id, left, top) => {
     const data = toolBox.find((elem) => elem.id === id);
 
-    setRender((prev) => [
-      ...prev,
-      {
-        ...data,
-        id: data.id + "-" + uuid().slice(0, 8),
-        children: data.children,
-        type: data.type,
-        form: data.form,
-        shortcut: data.shortcut,
-        left: left,
-        top: top,
-        pos: "canvas",
-      },
-    ]);
+    const newElem = {
+      ...data,
+      id: data.id + "-" + uuid().slice(0, 8),
+      left: left,
+      top: top,
+      pos: "canvas",
+    };
+
+    setActiveRender((prev) => [...prev, newElem.id]);
+
+    setRender((prev) => [...prev, newElem]);
   };
 
-  const getScroll = useRef(null)
+  const removeFromActive = (id) => {
+    setRender((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, left: 0, top: 0 } : item))
+    );
+    setActiveRender((prev) => prev.filter((elem) => elem !== id));
+  };
 
-  useEffect(() => {
-    getScroll.current = scrollY
-  }, [scrollY])
+  const addAfter = (id, after) => {
+    setRender((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? { ...item, after: { ...item.after, current: after } }
+          : item
+      )
+    );
+  };
+
+  const getScroll = useRef(null);
+  getScroll.current = scrollY;
 
   const findIdInObj = (id, obj) => {
     let res = {};
@@ -124,7 +142,6 @@ const BlockProvider = ({ children }) => {
   };
 
   const removeFromChildren = (id) => {
-    console.log("1");
     let res = {};
 
     setRender((prev) =>
@@ -147,29 +164,27 @@ const BlockProvider = ({ children }) => {
     return res;
   };
 
+  //* Работает нормально
   //Добавляет блок внутрь дргугого блока
   const setRenderCurrent = useCallback(
     (newCurr, id, i) => {
-      if (i === -1) {
-        setRender((prev) =>
-          prev.map((item) =>
-            item.id === id ? { ...item, after: newCurr } : item
-          )
-        );
-      } else {
-        setRender((prev) =>
-          prev.map((item) =>
-            item.id === id
-              ? {
-                  ...item,
-                  children: item.children.map((elem, index) =>
-                    index === i ? { ...elem, current: newCurr } : elem
-                  ),
+      setRender((prev) =>
+        prev.map((item) => {
+          if (item.id === id) {
+            return {
+              ...item,
+              children: item.children.map((child, index) => {
+                if (index === i) {
+                  return { ...child, current: newCurr };
                 }
-              : item
-          )
-        );
-      }
+
+                return child;
+              }),
+            };
+          }
+          return item;
+        })
+      );
     },
     [setRender]
   );
@@ -200,9 +215,13 @@ const BlockProvider = ({ children }) => {
     removeFromChildren,
     scrollY,
     setScrollY,
-    getScroll
+    getScroll,
+    activeRender,
+    removeFromActive,
+    addAfter,
   };
 
+  //? раскомментировать для поиска ошибок
   useEffect(() => {
     console.log(render);
   }, [render]);
